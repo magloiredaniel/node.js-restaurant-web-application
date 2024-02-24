@@ -3,11 +3,18 @@ on:
   push:
     branches:
     - test-ci-node
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.daniel-package }}
     
 jobs: 
   build:  
     name: Build Image
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
    
     steps:
     - name: Check out code
@@ -20,15 +27,15 @@ jobs:
         password: ${{ secrets.DANIEL_DOCKER_PASSWORD }}
         
     - name: Log in to the Container registry
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
-        registry: ghcr.io
+        registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
         password: ${{ secrets.DANIEL_GITHUB_TOKEN }}
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta 
-      uses: docker/metadata-action@v3
+      uses: docker/metadata-action@v4
       with:
         images: |
           danielmedou/myapprestaurant

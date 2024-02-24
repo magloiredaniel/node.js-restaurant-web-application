@@ -18,12 +18,21 @@ jobs:
       with:
         username: ${{ secrets.DANIEL_DOCKER_USERNAME }}
         password: ${{ secrets.DANIEL_DOCKER_PASSWORD }}
+        
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.DANIEL_GITHUB_TOKEN }}
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta 
       uses: docker/metadata-action@v3
       with:
-        images: danielmedou/myapprestaurant
+        images: |
+          danielmedou/myapprestaurant
+          ghcr.io/${{ github.daniel-package }}
       
     - name: Build and push Docker image
       uses: docker/build-push-action@v5

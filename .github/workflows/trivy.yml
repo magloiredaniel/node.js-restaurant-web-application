@@ -36,7 +36,7 @@ jobs:
         #run: |
           #docker build -t docker.io/devops-counsel/py-app:${{ github.sha }} .
         run: |
-          docker build -t docker.io/trivy-sacn:${{ github.sha }} .
+          docker build -t docker.io/trivy-sacn-vuln:${{ github.sha }} .
         #uses: docker/build-push-action@v5
         #with:
           #context: .
@@ -44,7 +44,7 @@ jobs:
           #push: true
       
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@test-ci-node
         with:
           #image-ref: 'docker.io/devops-counsel/py-app:${{ github.sha }}'
           image-ref: 'docker.io/trivy-sacn:${{ github.sha }}'

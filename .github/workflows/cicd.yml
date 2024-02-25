@@ -1,0 +1,51 @@
+name: Creating Node.js app. image and deploying it to Docker Hub
+on:
+  push:
+    branches:
+    - test-ci-node
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.daniel-package }}
+    
+jobs: 
+  build:  
+    name: Build Image
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+   
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DANIEL_DOCKER_USERNAME }}
+        password: ${{ secrets.DANIEL_DOCKER_PASSWORD }}
+        
+    #- name: Log in to the Container registry
+     # uses: docker/login-action@v3
+      #with:
+       # registry: ${{ env.REGISTRY }}
+        #username: ${{ github.actor }}
+        #password: ${{ secrets.DANIEL_GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta 
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          danielmedou/myapprestaurant
+          #ghcr.io/${{ github.daniel-package }}
+      
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
